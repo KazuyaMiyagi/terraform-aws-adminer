@@ -1,0 +1,31 @@
+[
+  {
+    "name": "adminer",
+    "image": "${image}",
+    "cpu": 0,
+    "portMappings": [
+      {
+        "containerPort": 8080,
+        "hostPort": 8080,
+        "protocol": "tcp"
+      }
+    ],
+    "essential": true,
+    "command": [],
+    "environment": [],
+    "mountPoints": [],
+    "volumesFrom": [],
+    "secrets": [],
+    "linuxParameters": {
+      "initProcessEnabled": true
+    },
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${awslogs_group}",
+        "awslogs-region": "${awslogs_region}",
+        "awslogs-stream-prefix": "adminer"
+      }
+    }
+  }
+]
