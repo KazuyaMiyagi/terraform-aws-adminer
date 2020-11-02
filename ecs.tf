@@ -1,12 +1,12 @@
 resource "aws_ecs_cluster" "adminer" {
-  name = "adminer"
+  name = var.cluster_name
 }
 
 resource "aws_ecs_task_definition" "adminer" {
-  family             = "adminer"
+  family             = var.task_family_name
   network_mode       = "awsvpc"
-  cpu                = "256"
-  memory             = "512"
+  cpu                = var.cpu
+  memory             = var.memory
   execution_role_arn = aws_iam_role.ecs_task_execution_role.arn
   container_definitions = templatefile("${path.module}/templates/adminer.json.tmpl", {
     image          = var.image
@@ -19,7 +19,8 @@ resource "aws_ecs_task_definition" "adminer" {
 }
 
 resource "aws_ecs_service" "adminer" {
-  name                               = "adminer"
+  name                               = var.service_name
+  platform_version                   = var.platform_version
   cluster                            = aws_ecs_cluster.adminer.arn
   task_definition                    = aws_ecs_task_definition.adminer.arn
   desired_count                      = var.desired_count

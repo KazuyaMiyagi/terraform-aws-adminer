@@ -4,10 +4,46 @@ variable "aws_region" {
   default     = ""
 }
 
+variable "platform_version" {
+  description = "ECS Service platform version"
+  default     = "1.4.0"
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "The name of ecs cluster"
+  default     = "adminer-cluster"
+  type        = string
+}
+
+variable "service_name" {
+  description = "The name of ecs service"
+  default     = "adminer-service"
+  type        = string
+}
+
+variable "task_family_name" {
+  description = "The name of ecs task definition"
+  default     = "adminer-taskdef"
+  type        = string
+}
+
 variable "image" {
   description = "Container image and tag"
   type        = string
   default     = "adminer:standalone"
+}
+
+variable "cpu" {
+  description = "Container cpu units"
+  type        = string
+  default     = "256"
+}
+
+variable "memory" {
+  description = "Container memory size"
+  type        = string
+  default     = "512"
 }
 
 variable "desired_count" {

@@ -17,7 +17,13 @@ data "aws_elb_service_account" "main" {}
 module "adminer" {
   source                   = "../../"
   aws_region               = data.aws_region.current.name
+  platform_version         = "LATEST"
+  cluster_name             = "adminer-cluster"
+  service_name             = "adminer-service"
+  task_family_name         = "adminer-taskdef"
   image                    = "adminer:standalone"
+  cpu                      = "256"
+  memory                   = "512"
   desired_count            = 1
   adminer_subnets          = [aws_subnet.private_0.id, aws_subnet.private_1.id]
   adminer_security_groups  = [aws_security_group.adminer.id]

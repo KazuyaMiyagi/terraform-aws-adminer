@@ -16,6 +16,11 @@ resource "aws_lb" "adminer" {
     bucket  = aws_s3_bucket.lb.id
     enabled = true
   }
+
+  depends_on = [
+    aws_s3_bucket.lb,
+    aws_s3_bucket_policy.lb
+  ]
 }
 
 resource "aws_lb_listener" "adminer_http" {
