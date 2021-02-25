@@ -42,7 +42,8 @@ resource "aws_ecs_service" "adminer" {
 
   lifecycle {
     ignore_changes = [
-      task_definition
+      desired_count,
+      task_definition,
     ]
   }
 }

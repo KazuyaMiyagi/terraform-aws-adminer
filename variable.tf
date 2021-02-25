@@ -46,6 +46,21 @@ variable "memory" {
   default     = "512"
 }
 
+# https://docs.aws.amazon.com/en_us/autoscaling/application/userguide/application-auto-scaling-scheduled-scaling.html
+variable "scale_in_schedule" {
+  description = "Scale in schedule"
+  type        = string
+  default     = "at(1970-01-01T00:00:00)"
+
+}
+
+# https://docs.aws.amazon.com/en_us/autoscaling/application/userguide/application-auto-scaling-scheduled-scaling.html
+variable "scale_out_schedule" {
+  description = "Scale out schedule"
+  type        = string
+  default     = "at(1970-01-01T00:00:00)"
+}
+
 variable "desired_count" {
   description = "Adminer container count"
   type        = number

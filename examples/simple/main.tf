@@ -25,6 +25,8 @@ module "adminer" {
   cpu                      = "256"
   memory                   = "512"
   desired_count            = 1
+  scale_in_schedule        = "cron(0 12 ? * * *)"
+  scale_out_schedule       = "cron(0 0 ? * MON-FRI *)"
   adminer_subnets          = [aws_subnet.private_0.id, aws_subnet.private_1.id]
   adminer_security_groups  = [aws_security_group.adminer.id]
   adminer_target_group_arn = aws_lb_target_group.adminer.arn
