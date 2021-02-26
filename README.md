@@ -18,8 +18,20 @@ module "adminer" {
   cpu                      = "256"
   memory                   = "512"
   desired_count            = 1
-  scale_in_schedule        = "cron(0 12 ? * * *)"
-  scale_out_schedule       = "cron(0 0 ? * MON-FRI *)"
+  autoscaling_settings     = {
+    scale-in : {
+      name         = "adminer_cluster_adminer_service_scale_in"
+      schedule     = "cron(0 12 ? * * *)"
+      max_capacity = 0
+      min_capacity = 0
+    },
+    scale-out : {
+      name         = "adminer_cluster_adminer_service_scale_out"
+      schedule     = "cron(0 0 ? * MON-FRI *)"
+      max_capacity = 2
+      min_capacity = 1
+    }
+  }
   adminer_subnets          = [aws_subnet.private_0.id, aws_subnet.private_1.id]
   adminer_security_groups  = [aws_security_group.lb.id]
   adminer_target_group_arn = aws_lb_target_group.adminer.arn
@@ -61,8 +73,7 @@ Inputs
 | cpu                         | Container cpu units                            | `string`       | `"256"`                     | no       |
 | memory                      | Container memory size                          | `string`       | `"512"`                     | no       |
 | desired\_count              | Adminer container count                        | `number`       | `0`                         | no       |
-| scale\_in\_schedule         | Scale in schedule                              | `string`       | `"at(1970-01-01T00:00:00)"` | no       |
-| scale\_out\_schedule        | Scale out schedule                             | `string`       | `"at(1970-01-01T00:00:00)"` | no       |
+| autoscaling\_settings       | Autoscaling settings                           | `map(object)`  | `{}`                        | no       |
 | adminer\_subnets            | Subnet ID list to be attached to the adminer   | `list(string)` | `[]`                        | yes      |
 | adminer\_security\_groups   | Security group list to be attached the adminer | `list(string)` | `[]`                        | yes      |
 | adminer\_target\_group\_arn | Target group to be attached the adminer        | `string`       | `""`                        | yes      |

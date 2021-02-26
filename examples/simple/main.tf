@@ -1,16 +1,28 @@
 module "this" {
-  source                   = "../../"
-  aws_region               = data.aws_region.current.name
-  platform_version         = "LATEST"
-  cluster_name             = "adminer-cluster"
-  service_name             = "adminer-service"
-  task_family_name         = "adminer-taskdef"
-  image                    = "adminer:standalone"
-  cpu                      = "256"
-  memory                   = "512"
-  desired_count            = 1
-  scale_in_schedule        = "cron(0 12 ? * * *)"
-  scale_out_schedule       = "cron(0 0 ? * MON-FRI *)"
+  source           = "../../"
+  aws_region       = data.aws_region.current.name
+  platform_version = "LATEST"
+  cluster_name     = "adminer-cluster"
+  service_name     = "adminer-service"
+  task_family_name = "adminer-taskdef"
+  image            = "adminer:standalone"
+  cpu              = "256"
+  memory           = "512"
+  desired_count    = 1
+  autoscaling_settings = {
+    scale-in : {
+      name         = "adminer_cluster_adminer_service_scale_in"
+      schedule     = "cron(0 12 ? * * *)"
+      max_capacity = 0
+      min_capacity = 0
+    },
+    scale-out : {
+      name         = "adminer_cluster_adminer_service_scale_out"
+      schedule     = "cron(0 0 ? * MON-FRI *)"
+      max_capacity = 2
+      min_capacity = 1
+    }
+  }
   adminer_subnets          = data.aws_subnet_ids.default.ids
   adminer_security_groups  = [aws_security_group.adminer.id]
   adminer_target_group_arn = aws_lb_target_group.adminer.arn
@@ -33,14 +45,17 @@ data "aws_availability_zones" "available" {}
 # elb service account data
 data "aws_elb_service_account" "main" {}
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc
 data "aws_vpc" "default" {
   default = true
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group
 data "aws_security_group" "default" {
   name = "default"
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids
 data "aws_subnet_ids" "default" {
   vpc_id = data.aws_vpc.default.id
 }

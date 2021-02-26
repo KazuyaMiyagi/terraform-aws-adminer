@@ -1,6 +1,6 @@
 resource "aws_appautoscaling_target" "main" {
-  max_capacity       = 0
-  min_capacity       = 0
+  max_capacity       = var.desired_count
+  min_capacity       = var.desired_count
   resource_id        = "service/${aws_ecs_cluster.adminer.name}/${aws_ecs_service.adminer.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
@@ -12,26 +12,16 @@ resource "aws_appautoscaling_target" "main" {
   }
 }
 
-resource "aws_appautoscaling_scheduled_action" "scale_in" {
-  name               = "${aws_ecs_cluster.adminer.name}-${aws_ecs_service.adminer.name}-scale-in"
-  service_namespace  = aws_appautoscaling_target.main.service_namespace
-  resource_id        = aws_appautoscaling_target.main.resource_id
-  scalable_dimension = aws_appautoscaling_target.main.scalable_dimension
-  schedule           = var.scale_in_schedule
-  scalable_target_action {
-    max_capacity = 0
-    min_capacity = 0
-  }
-}
+resource "aws_appautoscaling_scheduled_action" "main" {
+  for_each = var.autoscaling_settings
 
-resource "aws_appautoscaling_scheduled_action" "scale_out" {
-  name               = "${aws_ecs_cluster.adminer.name}-${aws_ecs_service.adminer.name}-scale-out"
+  name               = each.value.name
   service_namespace  = aws_appautoscaling_target.main.service_namespace
   resource_id        = aws_appautoscaling_target.main.resource_id
   scalable_dimension = aws_appautoscaling_target.main.scalable_dimension
-  schedule           = var.scale_out_schedule
+  schedule           = each.value.schedule
   scalable_target_action {
-    max_capacity = 2
-    min_capacity = 1
+    max_capacity = each.value.max_capacity
+    min_capacity = each.value.min_capacity
   }
 }
